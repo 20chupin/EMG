@@ -56,7 +56,7 @@ SNR=[]
 for IMF_arti in IMF_art:
     S_art_int = IMF_arti
     for i in range(1, 13):
-        b, a = signal.iirnotch(i * f0, Q, fs) # I wonder if a comb filter would not be better ?
+        b, a = signal.iirnotch(i * f0, i * Q, fs)
         S_art_int = signal.lfilter(b, a, S_art_int)
     y.append(S_emg + S_art_int)
     SNR.append(np.sum(sEMG_100**2/(sEMG_100-y[-1])**2))

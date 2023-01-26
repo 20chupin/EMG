@@ -94,10 +94,12 @@ for Q in [2, 5, 10, 30]:
     b, a = signal.iircomb(f0, Q, ftype='notch', fs=fs)
     EMG = signal.lfilter(b, a, sEMG)
     plt.plot(time, EMG, label=f"Q = {Q}")
-    plt.xlabel("Time (s)")
-    plt.ylabel("EMG (V)")
-    plt.title("EMG before and after filtering for different quality factors")
-    plt.legend()
+
+plt.xlabel("Time (s)")
+plt.ylabel("EMG (V)")
+plt.title("EMG before and after filtering for different quality factors")
+plt.legend()
+
 plt.show()
 
 # Comparison between the application of the filter with and without the band pass
@@ -107,7 +109,7 @@ sEMG_unfiltered = np.asarray(emg_unfiltered.sel(channel='Sensor 13.IM EMG13')[51
 
 Q = 10.0  # Quality factor
 
-b, a = signal.iircomb(f0, 10, ftype='notch', fs=fs)
+b, a = signal.iircomb(f0, Q, ftype='notch', fs=fs)
 
 EMG = signal.lfilter(b, a, sEMG)
 EMG_unfiltered = signal.lfilter(b, a, sEMG_unfiltered)
