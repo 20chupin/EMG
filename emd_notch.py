@@ -12,17 +12,20 @@ fs = 2000.0
 
 f0 = 33.33333 # FES frequency
 
-data_path = "../EMG_Biceps/EMG_with_FES/EMG_Biceps_with_FES.c3d"
+data_path =  "../EMG_Biceps/EMG_with_FES_and_Muscle_Force/EMG_with_FES_and_Muscle_Force.c3d"
 channels = ["Sensor 13.IM EMG13"]
 
 # Stage 0: Band pass filtering [20, 150 Hz]
-data = Analogs.from_c3d(data_path, usecols=channels).meca.band_pass(order=2, cutoff=[20, 150])
+data = Analogs.from_c3d(data_path, usecols=channels)#.meca.band_pass(order=2, cutoff=[20, 150])
 
-time = data.time[50500:52400]
-sEMG = np.asarray(data.sel(channel="Sensor 13.IM EMG13")[50500:52400])
+time = data.time[51000:56000:5]
+sEMG = np.asarray(data.sel(channel="Sensor 13.IM EMG13")[51000:56000:5])
+
+b, a = signal.butter(2, [20, 350], btype='bandpass', fs=fs)
+sEMG = signal.lfilter(b, a, sEMG)
 
 # Stage I: Empirical Mode Decomposition (EMD) -> I need to work on the stop condition (see article SD > 0.1)
-imf = emd.sift.sift(sEMG)
+imf = emd.sift.sift(sEMG, sift_thresh=1e-15)
 
 # Stage II: Identification of Artifact IMFs
 Sd = np.std(imf, axis=0)
